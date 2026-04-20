@@ -3,35 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ear Drummers - Audio Playback</title>
+  <title>Ear Drummers - Modern Audio Player</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
-    button { padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
-    button:hover { background: #45a049; }
-    button:disabled { background: #ccc; cursor: not-allowed; }
-    input[type="file"] { margin: 20px 0; }
-    audio { width: 100%; margin-top: 20px; display: none; }
-    h1 { color: #333; }
-    section { margin: 40px 0; }
-    .controls { margin: 20px 0; }
-    #time-display { font-size: 18px; margin: 10px 0; font-weight: bold; color: #666; }
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; 
+      margin: 0; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .player-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { 
+      color: #333; 
+      margin-bottom: 10px;
+      font-size: 2.5em;
+      font-weight: 300;
+    }
+    h2 { 
+      color: #666; 
+      margin: 10px 0 30px;
+      font-weight: 400;
+    }
+    label { 
+      display: block; 
+      margin: 20px 0 10px;
+      color: #555;
+      font-weight: 500;
+    }
+    input[type="file"] { 
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      background: #f9f9f9;
+      transition: border-color 0.3s;
+    }
+    input[type="file"]:hover { border-color: #4CAF50; }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+    }
+    button {
+      padding: 15px 30px;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    button:hover:not(:disabled) { 
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    }
+    button:disabled { 
+      background: #ccc; 
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .volume-control {
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .volume-control label {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+    input[type="range"] {
+      width: 150px;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+    #time-display { 
+      font-size: 20px; 
+      margin: 20px 0;
+      font-weight: 600;
+      color: #333;
+      font-family: 'Courier New', monospace;
+    }
+    audio { display: none; }
   </style>
 </head>
 <body>
-  <h1>Ear Drummers</h1>
-  
-  <section>
+  <div class="player-container">
+    <h1>🎵 Ear Drummers</h1>
     <h2>Taking the Vibez up a Notch</h2>
-    <p>Load and control your audio.</p>
-    <label for="audioFile">Choose Audio File:</label><br><br>
+    
+    <label for="audioFile">Choose Audio File</label>
     <input type="file" id="audioFile" accept="audio/*">
+    
     <div class="controls">
-      <button id="playBtn" onclick="playAudio()" disabled>Play</button>
-      <button id="pauseBtn" onclick="pauseAudio()" disabled>Pause</button>
+      <button id="playBtn" onclick="playAudio()" disabled>▶️ Play</button>
+      <button id="pauseBtn" onclick="pauseAudio()" disabled>⏸️ Pause</button>
     </div>
+    
+    <div class="volume-control">
+      <label>🔊 Volume:</label>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+    </div>
+    
     <div id="time-display">0:00 / 0:00</div>
+    
     <audio id="audioPlayer" preload="metadata"></audio>
-  </section>
+  </div>
 
   <script>
     const fileInput = document.getElementById('audioFile');
@@ -39,6 +146,7 @@
     const pauseBtn = document.getElementById('pauseBtn');
     const player = document.getElementById('audioPlayer');
     const timeDisplay = document.getElementById('time-display');
+    const volumeSlider = document.getElementById('volumeSlider');
 
     function formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
@@ -54,11 +162,17 @@
       timeDisplay.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
     });
 
+    volumeSlider.addEventListener('input', () => {
+      player.volume = parseFloat(volumeSlider.value);
+    });
+
     fileInput.addEventListener('change', function() {
       const file = this.files[0];
       if (file) {
         const url = URL.createObjectURL(file);
         player.src = url;
+        player.volume = 0.5;
+        volumeSlider.value = 0.5;
         player.load();
         playBtn.disabled = false;
         pauseBtn.disabled = false;
@@ -75,4 +189,3 @@
   </script>
 </body>
 </html>
-
