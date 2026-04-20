@@ -125,10 +125,13 @@
     <label for="audioFile">Choose Audio File</label>
     <input type="file" id="audioFile" accept="audio/*">
     
+
     <div class="controls">
       <button id="playBtn" onclick="playAudio()" disabled>▶️ Play</button>
       <button id="pauseBtn" onclick="pauseAudio()" disabled>⏸️ Pause</button>
+      <button id="muteBtn" onclick="toggleMute()">🔊</button>
     </div>
+
     
     <div class="volume-control">
       <label>🔊 Volume:</label>
@@ -142,11 +145,15 @@
 
   <script>
     const fileInput = document.getElementById('audioFile');
+
     const playBtn = document.getElementById('playBtn');
     const pauseBtn = document.getElementById('pauseBtn');
+    const muteBtn = document.getElementById('muteBtn');
     const player = document.getElementById('audioPlayer');
     const timeDisplay = document.getElementById('time-display');
     const volumeSlider = document.getElementById('volumeSlider');
+    let isMuted = false;
+
 
     function formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
@@ -183,9 +190,17 @@
       player.play().catch(e => console.log('Play failed:', e));
     }
 
+
     function pauseAudio() {
       player.pause();
     }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      muteBtn.textContent = isMuted ? '🔇' : '🔊';
+      player.volume = isMuted ? 0 : parseFloat(volumeSlider.value);
+    }
   </script>
+
 </body>
 </html>
