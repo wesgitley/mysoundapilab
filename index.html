@@ -58,24 +58,26 @@
       gap: 15px;
       margin: 30px 0;
     }
+
     button {
-      padding: 15px 30px;
+      padding: 12px 20px;
       background: linear-gradient(45deg, #4CAF50, #45a049);
       color: white;
       border: none;
-      border-radius: 50px;
+      border-radius: 25px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
     }
+
     button:hover:not(:disabled) { 
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
     }
     button:disabled { 
-      background: #ccc; 
+      background: rgba(76, 175, 80, 0.4); 
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -126,12 +128,16 @@
     <input type="file" id="audioFile" accept="audio/*">
     
 
+
+
+
+
     <div class="controls">
+      <button id="skipBackBtn" onclick="skipBackward()">⏮️</button>
       <button id="playBtn" onclick="playAudio()" disabled>▶️ Play</button>
       <button id="pauseBtn" onclick="pauseAudio()" disabled>⏸️ Pause</button>
-
-      <button id="muteBtn" onclick="toggleMute()" style="padding: 15px 20px; font-size: 18px;">🔊</button>
-
+      <button id="skipForwardBtn" onclick="skipForward()">⏭️</button>
+      <button id="muteBtn" onclick="toggleMute()">🔊</button>
     </div>
 
     
@@ -140,7 +146,17 @@
       <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
     </div>
     
+    <div class="seekbar-container">
+      <input type="range" id="seekSlider" min="0" max="100" value="0" step="0.1" style="width: 100%; margin: 20px 0;">
+    </div>
+
+    
+
+    <!-- Seekbar already updated above -->
+
+    
     <div id="time-display">0:00 / 0:00</div>
+
     
     <audio id="audioPlayer" preload="metadata"></audio>
   </div>
@@ -148,13 +164,25 @@
   <script>
     const fileInput = document.getElementById('audioFile');
 
+
+
+
+
     const playBtn = document.getElementById('playBtn');
     const pauseBtn = document.getElementById('pauseBtn');
+    const skipBackBtn = document.getElementById('skipBackBtn');
+    const skipForwardBtn = document.getElementById('skipForwardBtn');
     const muteBtn = document.getElementById('muteBtn');
+
+
     const player = document.getElementById('audioPlayer');
     const timeDisplay = document.getElementById('time-display');
+
+
     const volumeSlider = document.getElementById('volumeSlider');
+    const seekSlider = document.getElementById('seekSlider');
     let isMuted = false;
+
 
 
     function formatTime(seconds) {
@@ -167,13 +195,28 @@
       timeDisplay.textContent = `0:00 / ${formatTime(player.duration)}`;
     });
 
+
     player.addEventListener('timeupdate', () => {
       timeDisplay.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+      if (!isNaN(player.duration)) {
+        seekSlider.max = player.duration;
+        seekSlider.value = player.currentTime;
+      }
     });
+
+
 
     volumeSlider.addEventListener('input', () => {
       player.volume = parseFloat(volumeSlider.value);
     });
+
+    seekSlider.addEventListener('input', () => {
+      player.currentTime = parseFloat(seekSlider.value);
+    });
+
+
+
+
 
     fileInput.addEventListener('change', function() {
       const file = this.files[0];
@@ -188,13 +231,32 @@
       }
     });
 
+
+
+
+
+
+
     function playAudio() {
       player.play().catch(e => console.log('Play failed:', e));
     }
 
-
     function pauseAudio() {
       player.pause();
+    }
+
+
+
+    function skipBackward() {
+      if (player.duration) {
+        player.currentTime = Math.max(0, player.currentTime - 10);
+      }
+    }
+
+    function skipForward() {
+      if (player.duration) {
+        player.currentTime = Math.min(player.duration, player.currentTime + 10);
+      }
     }
 
     function toggleMute() {
@@ -202,7 +264,10 @@
       muteBtn.textContent = isMuted ? '🔇' : '🔊';
       player.volume = isMuted ? 0 : parseFloat(volumeSlider.value);
     }
+
   </script>
+
+
 
 </body>
 </html>
