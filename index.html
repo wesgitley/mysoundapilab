@@ -6,12 +6,15 @@
   <title>Ear Drummers - Audio Playback</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
-    button { padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button { padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
     button:hover { background: #45a049; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
     input[type="file"] { margin: 20px 0; }
-    audio { width: 100%; margin-top: 20px; }
+    audio { width: 100%; margin-top: 20px; display: none; }
     h1 { color: #333; }
     section { margin: 40px 0; }
+    .controls { margin: 20px 0; }
+    #time-display { font-size: 18px; margin: 10px 0; font-weight: bold; color: #666; }
   </style>
 </head>
 <body>
@@ -19,12 +22,57 @@
   
   <section>
     <h2>Taking the Vibez up a Notch</h2>
-    <p></p>
+    <p>Load and control your audio.</p>
     <label for="audioFile">Choose Audio File:</label><br><br>
     <input type="file" id="audioFile" accept="audio/*">
-    <br><br>
+    <div class="controls">
+      <button id="playBtn" onclick="playAudio()" disabled>Play</button>
+      <button id="pauseBtn" onclick="pauseAudio()" disabled>Pause</button>
+    </div>
+    <div id="time-display">0:00 / 0:00</div>
+    <audio id="audioPlayer" preload="metadata"></audio>
   </section>
 
+  <script>
+    const fileInput = document.getElementById('audioFile');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const player = document.getElementById('audioPlayer');
+    const timeDisplay = document.getElementById('time-display');
 
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    player.addEventListener('loadedmetadata', () => {
+      timeDisplay.textContent = `0:00 / ${formatTime(player.duration)}`;
+    });
+
+    player.addEventListener('timeupdate', () => {
+      timeDisplay.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+    });
+
+    fileInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        player.src = url;
+        player.load();
+        playBtn.disabled = false;
+        pauseBtn.disabled = false;
+      }
+    });
+
+    function playAudio() {
+      player.play().catch(e => console.log('Play failed:', e));
+    }
+
+    function pauseAudio() {
+      player.pause();
+    }
+  </script>
 </body>
 </html>
+
