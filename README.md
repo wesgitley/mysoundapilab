@@ -10,5 +10,5 @@ Simple Node.js Express API for sound experiments.
 
 ## Endpoints
 
-- GET / - Health check
+
 - GET /api/sounds - List sounds
