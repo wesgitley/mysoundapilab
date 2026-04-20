@@ -43,21 +43,30 @@
       color: #555;
       font-weight: 500;
     }
+
     input[type="file"] { 
       width: 100%;
       padding: 12px;
       border: 2px dashed #ddd;
       border-radius: 10px;
       background: #f9f9f9;
-      transition: border-color 0.3s;
+      transition: all 0.3s ease;
     }
+    input[type="file"]:hover {
+      border-color: #4CAF50;
+      transform: scale(1.02);
+      background: #f0f8ff;
+    }
+
     input[type="file"]:hover { border-color: #4CAF50; }
+
     .controls {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 8px;
       margin: 30px 0;
     }
+
 
     button {
       padding: 12px 20px;
@@ -72,10 +81,12 @@
       box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
     }
 
+
     button:hover:not(:disabled) { 
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.05);
       box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
     }
+
     button:disabled { 
       background: rgba(76, 175, 80, 0.4); 
       cursor: not-allowed;
@@ -101,14 +112,20 @@
       outline: none;
       -webkit-appearance: none;
     }
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #4CAF50;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
       cursor: pointer;
+      transition: transform 0.2s;
     }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
     #time-display { 
       font-size: 20px; 
       margin: 20px 0;
@@ -168,11 +185,16 @@
 
 
 
+
     const playBtn = document.getElementById('playBtn');
     const pauseBtn = document.getElementById('pauseBtn');
     const skipBackBtn = document.getElementById('skipBackBtn');
     const skipForwardBtn = document.getElementById('skipForwardBtn');
     const muteBtn = document.getElementById('muteBtn');
+    skipBackBtn.disabled = true;
+    skipForwardBtn.disabled = true;
+    muteBtn.disabled = true;
+
 
 
     const player = document.getElementById('audioPlayer');
@@ -218,6 +240,7 @@
 
 
 
+
     fileInput.addEventListener('change', function() {
       const file = this.files[0];
       if (file) {
@@ -228,8 +251,12 @@
         player.load();
         playBtn.disabled = false;
         pauseBtn.disabled = false;
+        skipBackBtn.disabled = false;
+        skipForwardBtn.disabled = false;
+        muteBtn.disabled = false;
       }
     });
+
 
 
 
