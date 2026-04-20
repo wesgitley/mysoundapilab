@@ -10,5 +10,4 @@ Simple Node.js Express API for sound experiments.
 
 ## Endpoints
 
-
-- GET /api/sounds - List sounds
+- Play audio files
